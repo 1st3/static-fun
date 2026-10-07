@@ -4,14 +4,11 @@ import { trails } from "@/content/trails";
 import { tales } from "@/content/tales";
 import { tips } from "@/content/tips";
 import { dispatches } from "@/content/dispatches";
-import { recentPosts, KIND_LABEL, timeAgo } from "@/lib/board";
+import { PostList } from "@/components/register-view";
 import { FloorWindows, TideDial, TideReadout } from "@/components/tide";
 import { ParkMap } from "@/components/park-map";
 
-export const dynamic = "force-dynamic";
-
 export default function Home() {
-  const posts = recentPosts(3);
   const tip = tips[new Date().getDate() % tips.length];
 
   return (
@@ -77,13 +74,7 @@ export default function Home() {
           </div>
           <div className="stack" style={{ ["--gap" as string]: "12px" }}>
             <p className="eyebrow">From the register</p>
-            {posts.map((p) => (
-              <Link key={p.id} href={`/register#${p.id}`} className="card card-link">
-                <div className="pill-row"><span className="pill">{KIND_LABEL[p.kind]}</span></div>
-                <p className="h-card" style={{ fontFamily: "var(--font-display)", fontWeight: 600, margin: "8px 0 4px" }}>{p.title}</p>
-                <p className="small faint" style={{ margin: 0 }}>{p.author} · {timeAgo(p.createdAt)} · {p.comments.length} replies</p>
-              </Link>
-            ))}
+            <PostList limit={3} />
             <Link href="/register" className="small">Open the register →</Link>
           </div>
         </div>

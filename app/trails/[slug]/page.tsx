@@ -5,10 +5,8 @@ import { areaBySlug } from "@/content/park";
 import { DIFFICULTY_LABEL, TIDE_LABEL, trailBySlug, trails } from "@/content/trails";
 import { highlightBySlug } from "@/content/highlights";
 import { tips, CATEGORY_LABEL } from "@/content/tips";
-import { postsFor, KIND_LABEL, timeAgo } from "@/lib/board";
+import { PostList } from "@/components/register-view";
 import { ParkMap } from "@/components/park-map";
-
-export const dynamic = "force-dynamic";
 
 export function generateStaticParams() {
   return trails.map((t) => ({ slug: t.slug }));
@@ -26,7 +24,6 @@ export default async function TrailPage({ params }: { params: Promise<{ slug: st
 
   const area = areaBySlug(t.area);
   const trailTips = tips.filter((x) => x.trail === t.slug);
-  const posts = postsFor(t.slug);
   const marks = t.highlights.map((h) => highlightBySlug(h)).filter(Boolean);
 
   return (
@@ -116,14 +113,7 @@ export default async function TrailPage({ params }: { params: Promise<{ slug: st
           <Link className="btn btn-ghost" href={`/register?trail=${t.slug}#new`}>Post about this trail</Link>
         </div>
         <div className="stack" style={{ marginTop: 18, ["--gap" as string]: "12px" }}>
-          {posts.length === 0 && <p className="dim">Nothing posted yet. Be the first.</p>}
-          {posts.map((p) => (
-            <Link key={p.id} href={`/register#${p.id}`} className="card card-link">
-              <span className="pill">{KIND_LABEL[p.kind]}</span>
-              <p className="h-card" style={{ fontFamily: "var(--font-display)", fontWeight: 600, margin: "8px 0 4px" }}>{p.title}</p>
-              <p className="small faint" style={{ margin: 0 }}>{p.author} · {timeAgo(p.createdAt)} · {p.comments.length} replies</p>
-            </Link>
-          ))}
+          <PostList trail={t.slug} />
         </div>
       </section>
 

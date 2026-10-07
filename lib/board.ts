@@ -1,7 +1,5 @@
-import fs from "node:fs";
-import path from "node:path";
+import { useCallback, useEffect, useState } from "react";
 import { registerSeed } from "@/content/register-seed";
-
 import { KIND_LABEL, type PostKind } from "./board-meta";
 
 export { KIND_LABEL };
@@ -26,67 +24,35 @@ export type Post = {
   comments: Comment[];
 };
 
-const DATA_DIR = path.join(process.cwd(), ".data");
-const DATA_FILE = path.join(DATA_DIR, "register.json");
+const STORAGE_KEY = "fundy-register-v1";
 
 /**
- * Posts live in a JSON file so the board survives a dev-server restart. On a
- * read-only filesystem the write silently fails and the in-memory copy carries
- * the session, which is the right trade for a demo deployment.
+ * The site is a static export, so there is no server to hold posts. The
+ * register is seeded from content and then lives in this browser's
+ * localStorage; posts are visible only to the visitor who wrote them.
  */
-// Next bundles pages and server actions separately, so module state would be
-// duplicated per bundle; globalThis is the one copy they all see.
-const g = globalThis as unknown as { __fundyBoard?: Post[] };
-
 function load(): Post[] {
-  if (g.__fundyBoard) return g.__fundyBoard;
   try {
-    const raw = fs.readFileSync(DATA_FILE, "utf8");
-    g.__fundyBoard = JSON.parse(raw) as Post[];
-  } catch {
-    g.__fundyBoard = structuredClone(registerSeed);
-    persist();
-  }
-  return g.__fundyBoard!;
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw) as Post[];
+  } catch {}
+  return structuredClone(registerSeed);
 }
 
-function persist() {
-  if (!g.__fundyBoard) return;
+function save(posts: Post[]) {
   try {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-    fs.writeFileSync(DATA_FILE, JSON.stringify(g.__fundyBoard, null, 2));
-  } catch {
-    // Read-only filesystem; the in-memory copy is still authoritative.
-  }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+  } catch {}
 }
 
 const newId = () =>
   `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
 
-export function allPosts(): Post[] {
-  return [...load()].sort(
-    (a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt),
-  );
-}
-
-export function postsFor(trail: string): Post[] {
-  return allPosts().filter((p) => p.trail === trail);
-}
-
-export function getPost(id: string): Post | undefined {
-  return load().find((p) => p.id === id);
-}
-
-export function recentPosts(limit: number): Post[] {
-  return allPosts().slice(0, limit);
-}
-
-export function commentCount(): number {
-  return load().reduce((n, p) => n + p.comments.length, 0);
-}
-
 const clean = (s: unknown, max: number) =>
   typeof s === "string" ? s.trim().slice(0, max) : "";
+
+const byNewest = (a: Post, b: Post) =>
+  Date.parse(b.createdAt) - Date.parse(a.createdAt);
 
 export type NewPost = {
   author: string;
@@ -96,66 +62,86 @@ export type NewPost = {
   body: string;
 };
 
-export function addPost(input: NewPost): { post?: Post; error?: string } {
-  const author = clean(input.author, 60) || "Anonymous";
-  const title = clean(input.title, 140);
-  const body = clean(input.body, 4000);
-  const trail = clean(input.trail, 60) || "park";
-  const kind = (
-    ["sighting", "conditions", "question", "note", "tide"] as const
-  ).includes(input.kind as PostKind)
-    ? (input.kind as PostKind)
-    : "note";
+/** Returns null until mounted, so server and first client render agree. */
+export function useBoard() {
+  const [posts, setPosts] = useState<Post[] | null>(null);
 
-  if (title.length < 4) return { error: "Give the post a title." };
-  if (body.length < 10) return { error: "Add a little more detail." };
+  useEffect(() => setPosts(load().sort(byNewest)), []);
 
-  const post: Post = {
-    id: newId(),
-    author,
-    trail,
-    kind,
-    title,
-    body,
-    createdAt: new Date().toISOString(),
-    comments: [],
-  };
-  load().unshift(post);
-  persist();
-  return { post };
-}
+  const commit = useCallback((next: Post[]) => {
+    setPosts(next);
+    save(next);
+  }, []);
 
-export function addComment(
-  postId: string,
-  author: string,
-  body: string,
-): { comment?: Comment; error?: string } {
-  const post = getPost(postId);
-  if (!post) return { error: "That post no longer exists." };
+  const addPost = useCallback(
+    (input: NewPost): { error?: string } => {
+      const title = clean(input.title, 140);
+      const body = clean(input.body, 4000);
+      const kind = (Object.keys(KIND_LABEL) as PostKind[]).includes(
+        input.kind as PostKind,
+      )
+        ? (input.kind as PostKind)
+        : "note";
 
-  const text = clean(body, 2000);
-  if (text.length < 2) return { error: "Write something first." };
+      if (title.length < 4) return { error: "Give the post a title." };
+      if (body.length < 10) return { error: "Add a little more detail." };
 
-  const comment: Comment = {
-    id: newId(),
-    author: clean(author, 60) || "Anonymous",
-    body: text,
-    createdAt: new Date().toISOString(),
-  };
-  post.comments.push(comment);
-  persist();
-  return { comment };
+      const post: Post = {
+        id: newId(),
+        author: clean(input.author, 60) || "Anonymous",
+        trail: clean(input.trail, 60) || "park",
+        kind,
+        title,
+        body,
+        createdAt: new Date().toISOString(),
+        comments: [],
+      };
+      commit([post, ...(posts ?? [])]);
+      return {};
+    },
+    [posts, commit],
+  );
+
+  const addComment = useCallback(
+    (postId: string, author: string, body: string): { error?: string } => {
+      const text = clean(body, 2000);
+      if (text.length < 2) return { error: "Write something first." };
+      if (!posts?.some((p) => p.id === postId))
+        return { error: "That post no longer exists." };
+
+      commit(
+        posts.map((p) =>
+          p.id === postId
+            ? {
+                ...p,
+                comments: [
+                  ...p.comments,
+                  {
+                    id: newId(),
+                    author: clean(author, 60) || "Anonymous",
+                    body: text,
+                    createdAt: new Date().toISOString(),
+                  },
+                ],
+              }
+            : p,
+        ),
+      );
+      return {};
+    },
+    [posts, commit],
+  );
+
+  return { posts, addPost, addComment };
 }
 
 export function timeAgo(iso: string): string {
-  const diff = Date.now() - Date.parse(iso);
-  const mins = Math.round(diff / 60_000);
+  const mins = Math.round((Date.now() - Date.parse(iso)) / 60_000);
   if (mins < 1) return "just now";
   if (mins < 60) return `${mins} min ago`;
   const hrs = Math.round(mins / 60);
   if (hrs < 24) return `${hrs} h ago`;
   const days = Math.round(hrs / 24);
   if (days < 30) return `${days} d ago`;
-  const months = Math.round(days / 30);
-  return `${months} mo ago`;
+  return `${Math.round(days / 30)} mo ago`;
 }

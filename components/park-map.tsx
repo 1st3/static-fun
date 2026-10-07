@@ -82,7 +82,7 @@ export function ParkMap({ initial }: { initial?: string }) {
             return (
               <a
                 key={t.slug}
-                href={`/trails/${t.slug}`}
+                href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/trails/${t.slug}/`}
                 className={`map-trail${isActive ? " is-active" : ""}${dimmed ? " is-dim" : ""}`}
                 onClick={(e) => {
                   e.preventDefault();
