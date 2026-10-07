@@ -1,16 +1,16 @@
-# static.fun
+# Fundy — The Tide Guide
 
-Wildcard domains unlock the ability to build _platforms_ that scale. With zero-configuration, you're able to provide your customers with a personalized space on your host domain. If you haven't already read our [blog post](https://vercel.com/blog/wildcard-domains), then start there. This project is a fun and simple demonstration of wildcard domains where you are able to claim a page under any subdomain if its available and retain edit rights via a unique session identifier. Please feel free to raise issues, and send PRs where you may have questions or feel like bits of code can be improved!
+An unofficial visitor guide to Fundy National Park, New Brunswick, built around the thing no other park site has: a live read on the highest tides on Earth, and what that opens or closes.
 
-### Technologies:
+- **Tide clock** (`lib/tide.ts`, `components/tide.tsx`): a harmonic model of Alma's tide with a boat that grounds and floats, sea-floor walk windows, and a monthly spring/neap calendar. It is a teaching model, not a navigational product; the UI points to official Canadian Hydrographic Service tables.
+- **Trails**: nine trails with why-the-ground-looks-like-this notes, tide flags, km-pinned waypoints, and an interactive SVG map.
+- **When to come**: pick a month, see what the park is doing.
+- **Tales, Tips, Dispatches**: stories, insider tips (filterable), ranger blog.
+- **Trail register**: a no-account visitor board with comments (`app/register`, `lib/board.ts`). Posts persist to `.data/register.json`, and fall back to memory on a read-only filesystem.
 
-- [FaunaDB](https://fauna.com): high-performance, low-latency, and serverless persistence of page data, and session identifiers
-- [Twilio Sendgrid](https://sendgrid.com): dead simple programmatic email service for sending unique session links
-- [Pusher Channels](https://pusher.com/channels): globally distributed and managed WebSocket infrastructure for broadcasting real-time updates when saving pages
+```
+npm install
+npm run dev
+```
 
-### Building Scalable Multitenant Applications
-
-We recently launched the [Platforms Starter Kit](https://demo.vercel.pub/platforms-starter-kit) that's a comprehensive template for building multi-tenant applications with built-in custom domains support:
-- Read the announcement: https://demo.vercel.pub/platforms-starter-kit
-- Check out the guide: https://vercel.com/guides/nextjs-multi-tenant-application
-- Try out the repo: https://github.com/vercel/platforms
+The previous static.fun app lives in `legacy/` for reference.
