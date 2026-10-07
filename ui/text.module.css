@@ -1,0 +1,43 @@
+.eyebrow {
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 10px;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  margin: 0;
+  text-wrap: balance;
+}
+.relaxed { line-height: inherit; letter-spacing: normal; text-wrap: pretty; }
+.hero { font-size: var(--step-5); }
+.page { font-size: var(--step-4); }
+.section { font-size: var(--step-3); }
+.card { font-size: var(--step-1); }
+
+.lede {
+  font-size: var(--step-1);
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+.dim { color: var(--text-dim); }
+.faint { color: var(--text-faint); }
+.small { font-size: var(--step--1); }
+.flush { margin: 0; }
+.numeric {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.prose { font-size: var(--step-1); line-height: 1.72; }
+.prose p { margin-bottom: 1.05em; }
+.prose p:first-of-type { font-size: 1.04em; }
+
+.quote { margin: 12px 0; }

@@ -13,6 +13,16 @@ npm install
 npm run dev
 ```
 
+## Design system
+
+The reusable UI lives in `ui/` and is independent of the park content:
+
+- `tokens.css`: colours, type scale, spacing, radii and the light/dark themes (as CSS variables).
+- `base.css`: reset and element defaults. Import both CSS files first, before any component code.
+- Typed primitives, each with its own CSS module and exported from `ui/index.ts`: `Page`, `Container`, `Section`, `Stack`, `Grid`, `Row`, `Box`, `Card`, `CardLink`, `Panel`, `Eyebrow`, `Heading`, `Lede`, `Text`, `Prose`, `Quote`, `TextLink`, `Pill`, `PillRow`, `Button`, `ButtonLink`, `Field`, `Input`, `Textarea`, `Select`, `FormRow`, `FormError`, `VisuallyHidden`, `SkipLink`, `TideLine`.
+
+Park-specific pieces (tide clock, map, header, footer, register) live in `components/` and style themselves with CSS modules. Spacing props (`mt`, `mb`) take pixel values.
+
 ## Deploying to GitHub Pages
 
 `.github/workflows/pages.yml` builds a static export (`output: "export"`) and deploys it on every push to `master`. One-time setup: repo **Settings → Pages → Source: GitHub Actions**. The site is served at `https://<user>.github.io/<repo>/`; CI sets `NEXT_PUBLIC_BASE_PATH` to `/<repo>`. To preview locally under that path, run `NEXT_PUBLIC_BASE_PATH=/static-fun npm run build` and serve `out/` from a folder named `static-fun`.

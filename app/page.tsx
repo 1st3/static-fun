@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { park } from "@/content/park";
 import { trails } from "@/content/trails";
 import { tales } from "@/content/tales";
@@ -7,102 +6,103 @@ import { dispatches } from "@/content/dispatches";
 import { PostList } from "@/components/register-view";
 import { FloorWindows, TideDial, TideReadout } from "@/components/tide";
 import { ParkMap } from "@/components/park-map";
+import {
+  Box, ButtonLink, Card, CardLink, Container, Eyebrow, Grid, Heading, Lede, Panel, Prose, Row, Section, Stack, Text, TextLink, TideLine,
+} from "@/ui";
+import styles from "./home.module.css";
 
 export default function Home() {
   const tip = tips[new Date().getDate() % tips.length];
 
   return (
     <>
-      <section className="hero">
-        <div className="wrap hero-grid">
+      <section className={styles.hero}>
+        <Container className={styles.heroGrid}>
           <div>
-            <p className="eyebrow">{park.name} · {park.province}</p>
-            <h1 className="h-hero">{park.tagline}</h1>
-            <p className="lede" style={{ marginTop: 18, maxWidth: "52ch" }}>
-              {park.blurb}
-            </p>
-            <div className="spread" style={{ marginTop: 26 }}>
-              <Link className="btn" href="/tide">Read today&rsquo;s tide</Link>
-              <Link className="btn btn-ghost" href="/trails">Browse {trails.length} trails</Link>
-            </div>
+            <Eyebrow>{park.name} · {park.province}</Eyebrow>
+            <Heading level={1} size="hero">{park.tagline}</Heading>
+            <Lede mt={18} measure="52ch">{park.blurb}</Lede>
+            <Row variant="buttons" mt={26}>
+              <ButtonLink href="/tide">Read today&rsquo;s tide</ButtonLink>
+              <ButtonLink variant="ghost" href="/trails">Browse {trails.length} trails</ButtonLink>
+            </Row>
           </div>
-          <div className="card hero-card">
+          <Card raised>
             <TideReadout />
-            <div style={{ marginTop: 18 }}><TideDial /></div>
-          </div>
-        </div>
-        <style>{`
-          .hero { padding-block: clamp(36px, 7vw, 88px); }
-          .hero-grid { display: grid; gap: clamp(28px, 5vw, 60px); grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); align-items: center; }
-          .hero-card { box-shadow: var(--shadow-lg); }
-        `}</style>
+            <Box mt={18}><TideDial /></Box>
+          </Card>
+        </Container>
       </section>
 
-      <hr className="tideline" />
+      <TideLine />
 
-      <section className="section">
-        <div className="wrap grid-2">
-          <div>
-            <p className="eyebrow">The sea floor</p>
-            <h2 className="h-sect">Is it open right now?</h2>
-            <p className="dim" style={{ marginTop: 12 }}>
-              Three places where the bay hands back its floor, and when each one is walkable.
-              Plan to be back above the wrack line well before the turn.
-            </p>
-          </div>
-          <FloorWindows />
-        </div>
-      </section>
+      <Section>
+        <Container>
+          <Grid variant="split">
+            <div>
+              <Eyebrow>The sea floor</Eyebrow>
+              <Heading level={2} size="section">Is it open right now?</Heading>
+              <Text tone="dim" mt={12}>
+                Three places where the bay hands back its floor, and when each one is walkable.
+                Plan to be back above the wrack line well before the turn.
+              </Text>
+            </div>
+            <FloorWindows />
+          </Grid>
+        </Container>
+      </Section>
 
-      <section className="section-tight">
-        <div className="wrap">
-          <p className="eyebrow">Park map</p>
-          <h2 className="h-sect" style={{ marginBottom: 20 }}>{trails.length} trails, one coast</h2>
+      <Section tight>
+        <Container>
+          <Eyebrow>Park map</Eyebrow>
+          <Heading level={2} size="section" mb={20}>{trails.length} trails, one coast</Heading>
           <ParkMap />
-        </div>
-      </section>
+        </Container>
+      </Section>
 
-      <section className="section">
-        <div className="wrap grid-2">
-          <div className="panel">
-            <p className="eyebrow">Insider tip · today</p>
-            <p className="prose" style={{ fontSize: "var(--step-1)" }}>&ldquo;{tip.text}&rdquo;</p>
-            <p className="small dim" style={{ marginTop: 14 }}>
-              {tip.author}, {tip.role} · {tip.seasons} seasons
-            </p>
-            <Link href="/tips" className="small">All tips →</Link>
-          </div>
-          <div className="stack" style={{ ["--gap" as string]: "12px" }}>
-            <p className="eyebrow">From the register</p>
-            <PostList limit={3} />
-            <Link href="/register" className="small">Open the register →</Link>
-          </div>
-        </div>
-      </section>
+      <Section>
+        <Container>
+          <Grid variant="split">
+            <Panel>
+              <Eyebrow>Insider tip · today</Eyebrow>
+              <Prose as="p">&ldquo;{tip.text}&rdquo;</Prose>
+              <Text size="sm" tone="dim" mt={14}>
+                {tip.author}, {tip.role} · {tip.seasons} seasons
+              </Text>
+              <TextLink href="/tips" size="sm">All tips →</TextLink>
+            </Panel>
+            <Stack gap={12}>
+              <Eyebrow>From the register</Eyebrow>
+              <PostList limit={3} />
+              <TextLink href="/register" size="sm">Open the register →</TextLink>
+            </Stack>
+          </Grid>
+        </Container>
+      </Section>
 
-      <section className="section-tight">
-        <div className="wrap">
-          <div className="row-between" style={{ marginBottom: 20 }}>
-            <h2 className="h-sect">Tales &amp; dispatches</h2>
-          </div>
-          <div className="grid">
+      <Section tight>
+        <Container>
+          <Row variant="between" mb={20}>
+            <Heading level={2} size="section">Tales &amp; dispatches</Heading>
+          </Row>
+          <Grid>
             {tales.slice(0, 2).map((t) => (
-              <Link key={t.slug} href={`/tales/${t.slug}`} className="card card-link">
-                <p className="eyebrow">Tale · {t.era}</p>
-                <h3 className="h-card">{t.title}</h3>
-                <p className="small dim" style={{ marginTop: 8 }}>{t.excerpt}</p>
-              </Link>
+              <CardLink key={t.slug} href={`/tales/${t.slug}`}>
+                <Eyebrow>Tale · {t.era}</Eyebrow>
+                <Heading level={3} size="card">{t.title}</Heading>
+                <Text size="sm" tone="dim" mt={8}>{t.excerpt}</Text>
+              </CardLink>
             ))}
             {dispatches.slice(0, 1).map((d) => (
-              <Link key={d.slug} href={`/dispatches/${d.slug}`} className="card card-link">
-                <p className="eyebrow">{d.tag} · {d.readingMinutes} min</p>
-                <h3 className="h-card">{d.title}</h3>
-                <p className="small dim" style={{ marginTop: 8 }}>{d.excerpt}</p>
-              </Link>
+              <CardLink key={d.slug} href={`/dispatches/${d.slug}`}>
+                <Eyebrow>{d.tag} · {d.readingMinutes} min</Eyebrow>
+                <Heading level={3} size="card">{d.title}</Heading>
+                <Text size="sm" tone="dim" mt={8}>{d.excerpt}</Text>
+              </CardLink>
             ))}
-          </div>
-        </div>
-      </section>
+          </Grid>
+        </Container>
+      </Section>
     </>
   );
 }

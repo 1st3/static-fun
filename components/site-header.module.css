@@ -1,0 +1,75 @@
+.header {
+  position: sticky; top: 0; z-index: 40;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.inner {
+  display: flex; align-items: center; gap: 18px;
+  min-height: 64px;
+}
+.brand {
+  display: inline-flex; align-items: center; gap: 10px;
+  text-decoration: none; color: var(--text); flex: none;
+}
+.mark { width: 32px; height: 32px; flex: none; }
+.ring { fill: none; stroke: var(--accent); stroke-width: 1.6; opacity: 0.85; }
+.wave { fill: none; stroke: var(--sea); stroke-width: 2; stroke-linecap: round; }
+.wave2 { opacity: 0.5; }
+.brandText { display: flex; flex-direction: column; line-height: 1.05; }
+.brandName {
+  font-family: var(--font-display);
+  font-size: 1.18rem; font-weight: 600; letter-spacing: -0.02em;
+}
+.brandSub {
+  font-size: 0.66rem; letter-spacing: 0.13em;
+  text-transform: uppercase; color: var(--text-faint);
+}
+.navDesktop { display: none; gap: 2px; margin-inline: auto; }
+.link {
+  padding: 7px 11px; border-radius: 8px;
+  color: var(--text-dim); text-decoration: none;
+  font-size: var(--step--1); font-weight: 500;
+  white-space: nowrap;
+}
+.link:hover { color: var(--text); background: var(--bg-sunken); }
+.linkActive { color: var(--accent); font-weight: 600; }
+.right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+
+.themeBtn {
+  width: 34px; height: 34px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: var(--bg-sunken);
+  color: var(--text);
+  font-size: 15px;
+  cursor: pointer;
+  flex: none;
+}
+.themeBtn:hover { border-color: var(--accent); color: var(--accent); }
+
+.menuBtn {
+  width: 34px; height: 34px; display: grid; place-items: center;
+  border-radius: 8px; border: 1px solid var(--line-strong);
+  background: var(--bg-sunken); color: var(--text);
+  font-size: 15px; cursor: pointer; flex: none;
+}
+
+.navMobile {
+  border-top: 1px solid var(--line);
+  background: var(--bg-raised);
+  padding-block: 8px 14px;
+}
+.mobileInner { display: flex; flex-direction: column; }
+.mobileLink {
+  padding: 11px 4px; color: var(--text); text-decoration: none;
+  border-bottom: 1px solid var(--line); font-weight: 500;
+}
+.mobileLink:last-child { border-bottom: 0; }
+
+@media (min-width: 1060px) {
+  .navDesktop { display: flex; }
+  .menuBtn { display: none; }
+  .right { margin-left: 0; }
+}

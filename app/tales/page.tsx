@@ -1,27 +1,27 @@
-import Link from "next/link";
 import type { Metadata } from "next";
 import { tales } from "@/content/tales";
+import { CardLink, Eyebrow, Grid, Heading, Lede, Page, Text } from "@/ui";
 
 export const metadata: Metadata = { title: "Tales" };
 
 export default function TalesPage() {
   return (
-    <div className="wrap section">
-      <p className="eyebrow">Tales</p>
-      <h1 className="h-page">Stories from the coast</h1>
-      <p className="lede" style={{ margin: "14px 0 28px", maxWidth: "60ch" }}>
+    <Page>
+      <Eyebrow>Tales</Eyebrow>
+      <Heading level={1} size="page">Stories from the coast</Heading>
+      <Lede mt={14} mb={28} measure="60ch">
         Folklore, history and hard-won lessons, each tied to a real place you can stand in.
-      </p>
-      <div className="grid">
+      </Lede>
+      <Grid>
         {tales.map((t) => (
-          <Link key={t.slug} href={`/tales/${t.slug}`} className="card card-link">
-            <p className="eyebrow">{t.era}</p>
-            <h2 className="h-card">{t.title}</h2>
-            <p className="small dim" style={{ margin: "8px 0 12px" }}>{t.excerpt}</p>
-            <p className="small faint" style={{ margin: 0 }}>{t.place}</p>
-          </Link>
+          <CardLink key={t.slug} href={`/tales/${t.slug}`}>
+            <Eyebrow>{t.era}</Eyebrow>
+            <Heading level={2} size="card">{t.title}</Heading>
+            <Text size="sm" tone="dim" mt={8} mb={12}>{t.excerpt}</Text>
+            <Text size="sm" tone="faint" flush>{t.place}</Text>
+          </CardLink>
         ))}
-      </div>
-    </div>
+      </Grid>
+    </Page>
   );
 }

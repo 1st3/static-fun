@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { dispatchBySlug, dispatches } from "@/content/dispatches";
+import { Eyebrow, Heading, Page, Prose, Text, TextLink } from "@/ui";
 
 export function generateStaticParams() {
   return dispatches.map((d) => ({ slug: d.slug }));
@@ -18,16 +18,16 @@ export default async function DispatchPage({ params }: { params: Promise<{ slug:
   const date = new Date(d.date).toLocaleDateString("en-CA", { year: "numeric", month: "long", day: "numeric" });
 
   return (
-    <article className="wrap-narrow section">
-      <Link href="/dispatches" className="small">← All dispatches</Link>
-      <p className="eyebrow" style={{ marginTop: 18 }}>{d.tag}</p>
-      <h1 className="h-page">{d.title}</h1>
-      <p className="small dim" style={{ margin: "14px 0 30px" }}>
+    <Page narrow as="article">
+      <TextLink href="/dispatches" size="sm">← All dispatches</TextLink>
+      <Eyebrow mt={18}>{d.tag}</Eyebrow>
+      <Heading level={1} size="page">{d.title}</Heading>
+      <Text size="sm" tone="dim" mt={14} mb={30}>
         {d.author}, {d.role} · {date} · {d.readingMinutes} min read
-      </p>
-      <div className="prose">
+      </Text>
+      <Prose>
         {d.body.map((p, i) => <p key={i}>{p}</p>)}
-      </div>
-    </article>
+      </Prose>
+    </Page>
   );
 }

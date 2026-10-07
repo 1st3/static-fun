@@ -1,6 +1,6 @@
-import Link from "next/link";
 import type { Metadata } from "next";
 import { dispatches } from "@/content/dispatches";
+import { CardLink, Eyebrow, Grid, Heading, Lede, Page, Text } from "@/ui";
 
 export const metadata: Metadata = { title: "Dispatches" };
 
@@ -10,22 +10,22 @@ const fmt = (iso: string) =>
 export default function DispatchesPage() {
   const sorted = [...dispatches].sort((a, b) => b.date.localeCompare(a.date));
   return (
-    <div className="wrap section">
-      <p className="eyebrow">Dispatches</p>
-      <h1 className="h-page">Notes from the park</h1>
-      <p className="lede" style={{ margin: "14px 0 28px", maxWidth: "60ch" }}>
+    <Page>
+      <Eyebrow>Dispatches</Eyebrow>
+      <Heading level={1} size="page">Notes from the park</Heading>
+      <Lede mt={14} mb={28} measure="60ch">
         Field notes, surveys and practical advice from the people who work here.
-      </p>
-      <div className="grid">
+      </Lede>
+      <Grid>
         {sorted.map((d) => (
-          <Link key={d.slug} href={`/dispatches/${d.slug}`} className="card card-link">
-            <p className="eyebrow">{d.tag} · {d.readingMinutes} min</p>
-            <h2 className="h-card">{d.title}</h2>
-            <p className="small dim" style={{ margin: "8px 0 12px" }}>{d.excerpt}</p>
-            <p className="small faint" style={{ margin: 0 }}>{d.author} · {fmt(d.date)}</p>
-          </Link>
+          <CardLink key={d.slug} href={`/dispatches/${d.slug}`}>
+            <Eyebrow>{d.tag} · {d.readingMinutes} min</Eyebrow>
+            <Heading level={2} size="card">{d.title}</Heading>
+            <Text size="sm" tone="dim" mt={8} mb={12}>{d.excerpt}</Text>
+            <Text size="sm" tone="faint" flush>{d.author} · {fmt(d.date)}</Text>
+          </CardLink>
         ))}
-      </div>
-    </div>
+      </Grid>
+    </Page>
   );
 }

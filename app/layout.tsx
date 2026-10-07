@@ -1,9 +1,11 @@
+import "@/ui/tokens.css";
+import "@/ui/base.css";
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { park } from "@/content/park";
-import "./globals.css";
+import { SkipLink } from "@/ui";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -53,9 +55,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
-        <a className="skip-link" href="#main">
-          Skip to content
-        </a>
+        <SkipLink>Skip to content</SkipLink>
         <SiteHeader />
         <main id="main">{children}</main>
         <SiteFooter />

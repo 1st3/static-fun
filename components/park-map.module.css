@@ -1,0 +1,95 @@
+.map { display: grid; gap: 16px; }
+.frame {
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 6px;
+  overflow: hidden;
+}
+.map svg { width: 100%; height: auto; display: block; }
+
+.road {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+.hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 26;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.line {
+  fill: none;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke-width 0.18s ease, opacity 0.18s ease;
+}
+.trail { cursor: pointer; outline: none; }
+.active .line { stroke-width: 6.5; }
+.dim .line { opacity: 0.25; }
+.trail:focus-visible .line {
+  stroke-width: 7;
+  filter: drop-shadow(0 0 5px var(--accent));
+}
+
+.place circle, .place rect {
+  fill: var(--bg);
+  stroke: var(--text);
+  stroke-width: 2;
+}
+.label {
+  fill: var(--text);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+}
+.labelSm {
+  fill: var(--text-faint);
+  font-family: var(--font-body);
+  font-size: 11px;
+}
+.seaLabel {
+  fill: var(--sea-deep);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  opacity: 0.75;
+}
+.calloutText {
+  fill: var(--text);
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: var(--bg-raised);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+.compass circle { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }
+.compass path { fill: var(--accent); }
+.compass text {
+  fill: var(--text-faint);
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.info {
+  min-height: 92px;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+.infoName {
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  font-weight: 600;
+  margin: 0;
+}
