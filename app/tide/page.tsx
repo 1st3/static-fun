@@ -2,39 +2,40 @@ import type { Metadata } from "next";
 import { park } from "@/content/park";
 import { FloorWindows, TideDial, TideReadout } from "@/components/tide";
 import { TideCalendar } from "@/components/tide-calendar";
+import { Card, Eyebrow, Grid, Heading, Lede, Page, Panel, Text } from "@/ui";
 
 export const metadata: Metadata = { title: "Tide" };
 
 export default function TidePage() {
   return (
-    <div className="wrap section">
-      <p className="eyebrow">The tide</p>
-      <h1 className="h-page">Twelve metres, twice a day</h1>
-      <p className="lede" style={{ margin: "14px 0 28px", maxWidth: "60ch" }}>{park.tideNote}</p>
+    <Page>
+      <Eyebrow>The tide</Eyebrow>
+      <Heading level={1} size="page">Twelve metres, twice a day</Heading>
+      <Lede mt={14} mb={28} measure="60ch">{park.tideNote}</Lede>
 
-      <div className="grid-2">
-        <div className="card"><TideReadout /></div>
-        <div className="card"><TideDial /></div>
-      </div>
+      <Grid variant="split">
+        <Card><TideReadout /></Card>
+        <Card><TideDial /></Card>
+      </Grid>
 
-      <h2 className="h-sect" style={{ margin: "44px 0 16px" }}>Sea-floor windows</h2>
+      <Heading level={2} size="section" mt={44} mb={16}>Sea-floor windows</Heading>
       <FloorWindows />
 
-      <h2 className="h-sect" style={{ margin: "44px 0 16px" }}>This month</h2>
+      <Heading level={2} size="section" mt={44} mb={16}>This month</Heading>
       <TideCalendar />
 
-      <div className="panel" style={{ marginTop: 40, borderColor: "var(--accent)" }}>
-        <p className="eyebrow">Read this before you go below the line</p>
-        <p style={{ margin: "0 0 10px" }}>
+      <Panel accent mt={40}>
+        <Eyebrow>Read this before you go below the line</Eyebrow>
+        <Text mb={10}>
           This clock is a teaching model. It shows the shape of a Fundy tide, not a surveyed
           prediction, and it knows nothing about wind, surge or air pressure.
-        </p>
-        <p style={{ margin: 0 }}>
+        </Text>
+        <Text flush>
           Before any walk on the shore, check the official{" "}
           <a href="https://www.tides.gc.ca/" target="_blank" rel="noopener noreferrer">Canadian Hydrographic Service</a>{" "}
           predictions, start on a falling tide, and never let the water get between you and your way up.
-        </p>
-      </div>
-    </div>
+        </Text>
+      </Panel>
+    </Page>
   );
 }

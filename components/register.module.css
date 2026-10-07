@@ -1,0 +1,21 @@
+.reply {
+  display: grid;
+  grid-template-columns: 140px 1fr auto;
+  gap: 8px;
+  margin-top: 14px;
+  align-items: center;
+}
+.reply > [role="alert"] { grid-column: 1 / -1; }
+
+@media (max-width: 560px) {
+  .reply { grid-template-columns: 1fr; }
+}
+
+.thread {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  margin-top: 14px;
+}
+
+.author { color: var(--text); }
+.body { white-space: pre-wrap; }

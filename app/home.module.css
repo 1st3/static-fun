@@ -1,0 +1,8 @@
+.hero { padding-block: clamp(36px, 7vw, 88px); }
+
+.heroGrid {
+  display: grid;
+  gap: clamp(28px, 5vw, 60px);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  align-items: center;
+}

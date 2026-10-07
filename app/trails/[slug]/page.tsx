@@ -7,6 +7,10 @@ import { highlightBySlug } from "@/content/highlights";
 import { tips, CATEGORY_LABEL } from "@/content/tips";
 import { PostList } from "@/components/register-view";
 import { ParkMap } from "@/components/park-map";
+import {
+  Box, ButtonLink, Card, Eyebrow, Grid, Heading, Lede, Page, Panel, Pill, PillRow, Prose, Quote, Row, Stack, Text, TextLink,
+} from "@/ui";
+import styles from "./trail.module.css";
 
 export function generateStaticParams() {
   return trails.map((t) => ({ slug: t.slug }));
@@ -27,111 +31,105 @@ export default async function TrailPage({ params }: { params: Promise<{ slug: st
   const marks = t.highlights.map((h) => highlightBySlug(h)).filter(Boolean);
 
   return (
-    <div className="wrap section">
-      <Link href="/trails" className="small">← All trails</Link>
-      <p className="eyebrow" style={{ marginTop: 18 }}>{area.name}</p>
-      <h1 className="h-page">{t.name}</h1>
-      <p className="lede" style={{ margin: "14px 0 20px", maxWidth: "60ch" }}>{t.summary}</p>
+    <Page>
+      <TextLink href="/trails" size="sm">← All trails</TextLink>
+      <Eyebrow mt={18}>{area.name}</Eyebrow>
+      <Heading level={1} size="page">{t.name}</Heading>
+      <Lede mt={14} mb={20} measure="60ch">{t.summary}</Lede>
 
-      <div className="pill-row">
-        <span className="pill">{t.distanceKm} km {t.shape}</span>
-        <span className="pill">{DIFFICULTY_LABEL[t.difficulty]}</span>
-        <span className="pill">{t.hours} h</span>
-        <span className="pill">+{t.gainM} m</span>
-        {t.tide !== "none" && <span className="pill pill-accent">{TIDE_LABEL[t.tide]}</span>}
-      </div>
+      <PillRow>
+        <Pill>{t.distanceKm} km {t.shape}</Pill>
+        <Pill>{DIFFICULTY_LABEL[t.difficulty]}</Pill>
+        <Pill>{t.hours} h</Pill>
+        <Pill>+{t.gainM} m</Pill>
+        {t.tide !== "none" && <Pill tone="accent">{TIDE_LABEL[t.tide]}</Pill>}
+      </PillRow>
 
       {t.tideNote && (
-        <div className="panel" style={{ marginTop: 24, borderColor: "var(--accent)" }}>
-          <p className="eyebrow">Tide</p>
-          <p style={{ margin: 0 }}>{t.tideNote}</p>
-          <p className="small" style={{ margin: "10px 0 0" }}><Link href="/tide">Check the tide clock →</Link></p>
-        </div>
+        <Panel accent mt={24}>
+          <Eyebrow>Tide</Eyebrow>
+          <Text flush>{t.tideNote}</Text>
+          <Text size="sm" mt={10} mb={0}><Link href="/tide">Check the tide clock →</Link></Text>
+        </Panel>
       )}
 
-      <div className="grid-2" style={{ marginTop: 36 }}>
-        <div className="stack" style={{ ["--gap" as string]: "28px" }}>
+      <Grid variant="split" mt={36}>
+        <Stack gap={28}>
           <section>
-            <h2 className="h-card">Why the ground looks like this</h2>
-            <p className="prose" style={{ marginTop: 10 }}>{t.ground}</p>
+            <Heading level={2} size="card">Why the ground looks like this</Heading>
+            <Prose as="p" mt={10}>{t.ground}</Prose>
           </section>
           <section>
-            <h2 className="h-card">Along the way</h2>
-            <ol className="wp">
+            <Heading level={2} size="card">Along the way</Heading>
+            <ol className={styles.waypoints}>
               {t.waypoints.map((w) => (
                 <li key={w.km}>
-                  <span className="wp-km numeric">km {w.km}</span>
+                  <span className={styles.km}>km {w.km}</span>
                   <div>
                     <strong>{w.name}</strong>
-                    <p className="dim" style={{ margin: "4px 0 0" }}>{w.note}</p>
+                    <Text tone="dim" mt={4} mb={0}>{w.note}</Text>
                   </div>
                 </li>
               ))}
             </ol>
           </section>
-        </div>
+        </Stack>
 
-        <aside className="stack" style={{ ["--gap" as string]: "16px" }}>
-          <div className="card">
-            <dl className="facts">
+        <Stack as="aside" gap={16}>
+          <Card>
+            <dl className={styles.facts}>
               <dt>Trailhead</dt><dd>{t.trailhead}</dd>
               <dt>Parking</dt><dd>{t.parking}</dd>
               <dt>Footing</dt><dd>{t.footing}</dd>
               <dt>Best time</dt><dd>{t.bestTime}</dd>
               <dt>Access</dt><dd>{t.accessibility}</dd>
             </dl>
-          </div>
+          </Card>
           {marks.length > 0 && (
-            <div className="panel">
-              <p className="eyebrow">Look for</p>
-              <ul className="plain">
-                {marks.map((h) => <li key={h!.slug}><strong>{h!.name}</strong><br /><span className="small dim">{h!.where}</span></li>)}
+            <Panel>
+              <Eyebrow>Look for</Eyebrow>
+              <ul className={styles.plain}>
+                {marks.map((h) => (
+                  <li key={h!.slug}>
+                    <strong>{h!.name}</strong>
+                    <br />
+                    <Text as="span" size="sm" tone="dim">{h!.where}</Text>
+                  </li>
+                ))}
               </ul>
-            </div>
+            </Panel>
           )}
-        </aside>
-      </div>
+        </Stack>
+      </Grid>
 
       {trailTips.length > 0 && (
-        <section style={{ marginTop: 48 }}>
-          <h2 className="h-sect">Insider tips</h2>
-          <div className="grid" style={{ marginTop: 18 }}>
+        <Box as="section" mt={48}>
+          <Heading level={2} size="section">Insider tips</Heading>
+          <Grid mt={18}>
             {trailTips.map((x) => (
-              <figure key={x.id} className="card" style={{ margin: 0 }}>
-                <span className="pill">{CATEGORY_LABEL[x.category]}</span>
-                <blockquote style={{ margin: "12px 0" }}>{x.text}</blockquote>
-                <figcaption className="small dim">{x.author}, {x.role}</figcaption>
-              </figure>
+              <Card as="figure" key={x.id}>
+                <Pill>{CATEGORY_LABEL[x.category]}</Pill>
+                <Quote>{x.text}</Quote>
+                <Text as="figcaption" size="sm" tone="dim">{x.author}, {x.role}</Text>
+              </Card>
             ))}
-          </div>
-        </section>
+          </Grid>
+        </Box>
       )}
 
-      <section style={{ marginTop: 48 }}>
-        <div className="row-between">
-          <h2 className="h-sect">From the register</h2>
-          <Link className="btn btn-ghost" href={`/register?trail=${t.slug}#new`}>Post about this trail</Link>
-        </div>
-        <div className="stack" style={{ marginTop: 18, ["--gap" as string]: "12px" }}>
+      <Box as="section" mt={48}>
+        <Row variant="between">
+          <Heading level={2} size="section">From the register</Heading>
+          <ButtonLink variant="ghost" href={`/register?trail=${t.slug}#new`}>Post about this trail</ButtonLink>
+        </Row>
+        <Stack gap={12} mt={18}>
           <PostList trail={t.slug} />
-        </div>
-      </section>
+        </Stack>
+      </Box>
 
-      <section style={{ marginTop: 48 }}>
+      <Box as="section" mt={48}>
         <ParkMap initial={t.slug} />
-      </section>
-
-      <style>{`
-        .wp { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 18px; border-left: 2px solid var(--line-strong); }
-        .wp li { display: grid; grid-template-columns: 64px 1fr; gap: 12px; padding-left: 16px; position: relative; }
-        .wp li::before { content: ""; position: absolute; left: -6px; top: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
-        .wp-km { font-size: var(--step--1); font-weight: 600; color: var(--accent); padding-top: 2px; }
-        .facts { margin: 0; display: grid; gap: 4px; }
-        .facts dt { font-size: var(--step--1); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-faint); margin-top: 10px; }
-        .facts dt:first-child { margin-top: 0; }
-        .facts dd { margin: 0; font-size: var(--step--1); }
-        .plain { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
-      `}</style>
-    </div>
+      </Box>
+    </Page>
   );
 }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { MONTHS, MONTHS_LONG, KIND_LABEL, highlights } from "@/content/highlights";
+import { Button, Card, Eyebrow, Grid, Heading, Lede, Page, Pill, PillRow, Text } from "@/ui";
 
 export default function WhenPage() {
   const [month, setMonth] = useState(new Date().getMonth() + 1);
@@ -10,49 +11,49 @@ export default function WhenPage() {
   const peak = now.filter((h) => h.peak.includes(month));
 
   return (
-    <div className="wrap section">
-      <p className="eyebrow">When to come</p>
-      <h1 className="h-page">What the park is doing in {MONTHS_LONG[month - 1]}</h1>
-      <p className="lede" style={{ margin: "14px 0 24px", maxWidth: "60ch" }}>
+    <Page>
+      <Eyebrow>When to come</Eyebrow>
+      <Heading level={1} size="page">What the park is doing in {MONTHS_LONG[month - 1]}</Heading>
+      <Lede mt={14} mb={24} measure="60ch">
         Pick a month. Highlighted rows are at their best; the rest are worth planning around.
-      </p>
+      </Lede>
 
-      <div className="pill-row" role="tablist" aria-label="Month">
+      <PillRow role="tablist" aria-label="Month">
         {MONTHS.map((m, i) => (
-          <button
+          <Button
             key={m}
             role="tab"
             aria-selected={month === i + 1}
-            className={`btn ${month === i + 1 ? "" : "btn-ghost"}`}
+            variant={month === i + 1 ? "primary" : "ghost"}
             onClick={() => setMonth(i + 1)}
-          >{m}</button>
+          >{m}</Button>
         ))}
-      </div>
+      </PillRow>
 
-      <div className="grid" style={{ marginTop: 28 }}>
+      <Grid mt={28}>
         {[...peak, ...now.filter((h) => !peak.includes(h))].map((h) => (
-          <article key={h.slug} className="card" style={peak.includes(h) ? { borderColor: "var(--accent)" } : undefined}>
-            <div className="pill-row">
-              <span className="pill">{KIND_LABEL[h.kind]}</span>
-              {peak.includes(h) && <span className="pill pill-accent">Peak</span>}
-            </div>
-            <h2 className="h-card" style={{ margin: "10px 0 6px" }}>{h.name}</h2>
-            <p className="small dim"><strong>Where:</strong> {h.where}</p>
-            <p className="small"><strong>How:</strong> {h.how}</p>
+          <Card as="article" key={h.slug} accent={peak.includes(h)}>
+            <PillRow>
+              <Pill>{KIND_LABEL[h.kind]}</Pill>
+              {peak.includes(h) && <Pill tone="accent">Peak</Pill>}
+            </PillRow>
+            <Heading level={2} size="card" mt={10} mb={6}>{h.name}</Heading>
+            <Text size="sm" tone="dim"><strong>Where:</strong> {h.where}</Text>
+            <Text size="sm"><strong>How:</strong> {h.how}</Text>
             <details>
-              <summary className="small">Why it happens here</summary>
-              <p className="small dim" style={{ marginTop: 8 }}>{h.why}</p>
+              <Text as="summary" size="sm">Why it happens here</Text>
+              <Text size="sm" tone="dim" mt={8}>{h.why}</Text>
             </details>
             {h.trails.length > 0 && (
-              <p className="small" style={{ marginTop: 10, marginBottom: 0 }}>
+              <Text size="sm" mt={10} mb={0}>
                 {h.trails.map((t, i) => (
                   <span key={t}>{i > 0 && " · "}<Link href={`/trails/${t}`}>{t.replace(/-/g, " ")}</Link></span>
                 ))}
-              </p>
+              </Text>
             )}
-          </article>
+          </Card>
         ))}
-      </div>
-    </div>
+      </Grid>
+    </Page>
   );
 }

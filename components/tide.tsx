@@ -10,6 +10,8 @@ import {
   tideState,
   type TideState,
 } from "@/lib/tide";
+import { Eyebrow, Pill, Row, Text } from "@/ui";
+import styles from "./tide.module.css";
 
 /** Everything here is clock-dependent, so it mounts empty and fills in. */
 function useTide(intervalMs = 20_000) {
@@ -54,7 +56,7 @@ export function TideDial() {
   const lowY = tide ? yFor(tide.nextLow.height) : yFor(1);
 
   return (
-    <figure className="dial">
+    <figure className={styles.dial}>
       <svg
         viewBox={`0 0 ${VB.w} ${VB.h}`}
         role="img"
@@ -75,7 +77,7 @@ export function TideDial() {
         </defs>
 
         {/* extreme-water reference lines */}
-        <g className="dial-refs">
+        <g className={styles.refs}>
           <line x1="0" y1={highY} x2="604" y2={highY} />
           <text x="8" y={highY - 7}>
             next high {tide ? `${tide.nextHigh.height.toFixed(1)} m` : "—"}
@@ -89,7 +91,7 @@ export function TideDial() {
         <g clipPath="url(#harbourClip)">
           {/* water */}
           <rect
-            className="dial-water"
+            className={styles.water}
             x="0"
             y={waterY}
             width="604"
@@ -97,7 +99,7 @@ export function TideDial() {
             fill="url(#waterGrad)"
           />
           <line
-            className="dial-surface"
+            className={styles.surface}
             x1="0"
             y1={waterY}
             x2="604"
@@ -105,12 +107,12 @@ export function TideDial() {
           />
 
           {/* harbour bottom */}
-          <path className="dial-bed" d={BED_PATH} />
-          <path className="dial-bed-line" d={BED_LINE} />
+          <path className={styles.bed} d={BED_PATH} />
+          <path className={styles.bedLine} d={BED_LINE} />
 
           {/* boat */}
           <g
-            className="dial-boat"
+            className={styles.boat}
             transform={`translate(${BOAT_X} ${boatY}) rotate(${aground ? -7 : 0})`}
           >
             <path
@@ -126,7 +128,7 @@ export function TideDial() {
         </g>
 
         {/* wharf */}
-        <g className="dial-wharf">
+        <g className={styles.wharf}>
           <rect x="604" y={TOP_Y - 26} width="76" height="14" rx="2" />
           <rect x="612" y={TOP_Y - 12} width="9" height={400 - TOP_Y + 12} />
           <rect x="648" y={TOP_Y - 12} width="9" height={400 - TOP_Y + 12} />
@@ -144,7 +146,7 @@ export function TideDial() {
         </g>
 
         {/* scale */}
-        <g className="dial-scale">
+        <g className={styles.scale}>
           {[0, 4, 8, 12].map((m) => (
             <g key={m}>
               <line x1="586" y1={yFor(m)} x2="598" y2={yFor(m)} />
@@ -156,42 +158,10 @@ export function TideDial() {
         </g>
       </svg>
 
-      <figcaption className="small faint">
+      <Text as="figcaption" size="sm" tone="faint" mt={12}>
         The wharf at Alma, to scale. The boat sits on the harbour bottom at low
         water and floats level with the deck at high.
-      </figcaption>
-
-      <style>{`
-        .dial { margin: 0; }
-        .dial svg { width: 100%; height: auto; display: block; overflow: visible; }
-        .dial figcaption { margin-top: 12px; }
-        .dial-water, .dial-surface, .dial-boat {
-          transition: y 1.2s ease, height 1.2s ease, y1 1.2s ease, y2 1.2s ease, transform 1.2s ease;
-        }
-        .dial-surface { stroke: var(--sea-soft); stroke-width: 2; }
-        .dial-bed { fill: var(--line-strong); opacity: 0.55; }
-        .dial-bed-line { fill: none; stroke: var(--text-faint); stroke-width: 2; }
-        .dial-wharf rect { fill: var(--text-faint); opacity: 0.75; }
-        .dial-refs line {
-          stroke: var(--text-faint);
-          stroke-width: 1;
-          stroke-dasharray: 3 5;
-          opacity: 0.8;
-        }
-        .dial-refs text {
-          fill: var(--text-faint);
-          font-size: 12px;
-          font-family: var(--font-body);
-          letter-spacing: 0.04em;
-        }
-        .dial-scale line { stroke: var(--text-faint); stroke-width: 1.5; }
-        .dial-scale text {
-          fill: var(--text-faint);
-          font-size: 12px;
-          font-family: var(--font-body);
-          font-variant-numeric: tabular-nums;
-        }
-      `}</style>
+      </Text>
     </figure>
   );
 }
@@ -205,69 +175,41 @@ export function TideReadout() {
 
   if (!tide) {
     return (
-      <div className="readout" aria-hidden="true">
-        <div className="readout-main">
-          <span className="readout-num numeric">—</span>
-          <span className="readout-unit">m</span>
+      <div aria-hidden="true">
+        <div className={styles.readoutMain}>
+          <span className={styles.readoutNum}>—</span>
+          <span className={styles.readoutUnit}>m</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="readout">
-      <p className="eyebrow">Right now at Alma</p>
-      <div className="readout-main">
-        <span className="readout-num numeric">{tide.height.toFixed(1)}</span>
-        <span className="readout-unit">m</span>
-        <span className={`pill ${tide.rising ? "pill-sea" : "pill-accent"}`}>
+    <div>
+      <Eyebrow>Right now at Alma</Eyebrow>
+      <div className={styles.readoutMain}>
+        <span className={styles.readoutNum}>{tide.height.toFixed(1)}</span>
+        <span className={styles.readoutUnit}>m</span>
+        <Pill tone={tide.rising ? "sea" : "accent"}>
           {tide.rising ? "↑ rising" : "↓ falling"}
-        </span>
+        </Pill>
       </div>
-      <dl className="readout-grid">
+      <dl className={styles.readoutGrid}>
         <div>
           <dt>Next {tide.next.kind}</dt>
-          <dd className="numeric">
+          <dd>
             {formatTime(tide.next.at)} · {tide.next.height.toFixed(1)} m
           </dd>
         </div>
         <div>
           <dt>In</dt>
-          <dd className="numeric">
-            {formatDuration(tide.next.at.getTime() - Date.now())}
-          </dd>
+          <dd>{formatDuration(tide.next.at.getTime() - Date.now())}</dd>
         </div>
         <div>
           <dt>This swing</dt>
-          <dd className="numeric">{tide.swing.toFixed(1)} m</dd>
+          <dd>{tide.swing.toFixed(1)} m</dd>
         </div>
       </dl>
-
-      <style>{`
-        .readout-main { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-        .readout-num {
-          font-family: var(--font-display);
-          font-size: clamp(3rem, 9vw, 4.6rem);
-          font-weight: 600;
-          line-height: 1;
-          letter-spacing: -0.03em;
-        }
-        .readout-unit { font-size: var(--step-2); color: var(--text-dim); margin-right: 6px; }
-        .readout-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-          gap: 14px;
-          margin: 22px 0 0;
-          padding-top: 18px;
-          border-top: 1px solid var(--line);
-        }
-        .readout-grid dt {
-          font-size: var(--step--1);
-          color: var(--text-faint);
-          margin-bottom: 2px;
-        }
-        .readout-grid dd { margin: 0; font-weight: 600; font-size: var(--step-0); }
-      `}</style>
     </div>
   );
 }
@@ -288,25 +230,25 @@ export function FloorWindows() {
   useEffect(() => setMounted(true), []);
 
   return (
-    <ul className="floors">
+    <ul className={styles.floors}>
       {FLOOR_SITES.map((site) => {
         const w = mounted ? floorWindow(site.threshold) : null;
         return (
-          <li key={site.slug} className="floor">
-            <div className="row-between">
+          <li key={site.slug} className={styles.floor}>
+            <Row variant="between">
               <strong>{site.name}</strong>
               {w && (
-                <span className={`pill ${w.openNow ? "pill-accent" : ""}`}>
+                <Pill tone={w.openNow ? "accent" : "default"}>
                   {w.openNow ? "Open now" : "Closed"}
-                </span>
+                </Pill>
               )}
-            </div>
-            <p className="small dim" style={{ margin: "6px 0 10px" }}>
+            </Row>
+            <Text size="sm" tone="dim" mt={6} mb={10}>
               {site.note}
-            </p>
-            <p className="small numeric" style={{ margin: 0 }}>
+            </Text>
+            <Text size="sm" numeric flush>
               {!w ? (
-                <span className="faint">…</span>
+                <Text as="span" tone="faint">…</Text>
               ) : w.openNow ? (
                 <>
                   Closes in <strong>{formatDuration(w.msUntilChange)}</strong>, at{" "}
@@ -318,20 +260,10 @@ export function FloorWindows() {
                   {formatTime(w.opens)} until {formatTime(w.closes)}
                 </>
               )}
-            </p>
+            </Text>
           </li>
         );
       })}
-
-      <style>{`
-        .floors { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
-        .floor {
-          background: var(--bg-raised);
-          border: 1px solid var(--line);
-          border-radius: var(--radius-sm);
-          padding: 14px 16px;
-        }
-      `}</style>
     </ul>
   );
 }
@@ -344,51 +276,19 @@ export function TideStrip() {
   const tide = useTide(30_000);
 
   return (
-    <Link href="/tide" className="strip">
-      <span className="strip-dot" aria-hidden="true" />
+    <Link href="/tide" className={styles.strip}>
+      <span className={styles.stripDot} aria-hidden="true" />
       {tide ? (
-        <span className="numeric">
+        <span className={styles.stripValue}>
           <strong>{tide.height.toFixed(1)} m</strong>
-          <span className="strip-sep">{tide.rising ? "↑" : "↓"}</span>
-          <span className="strip-next">
+          <span className={styles.stripSep}>{tide.rising ? "↑" : "↓"}</span>
+          <span className={styles.stripNext}>
             {tide.next.kind} {formatTime(tide.next.at)}
           </span>
         </span>
       ) : (
-        <span className="faint small">tide…</span>
+        <Text as="span" size="sm" tone="faint">tide…</Text>
       )}
-
-      <style>{`
-        .strip {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          padding: 5px 13px;
-          border-radius: 999px;
-          border: 1px solid var(--line-strong);
-          background: var(--bg-sunken);
-          color: var(--text);
-          text-decoration: none;
-          font-size: var(--step--1);
-          white-space: nowrap;
-        }
-        .strip:hover { border-color: var(--accent); }
-        .strip-dot {
-          width: 7px; height: 7px; border-radius: 50%;
-          background: var(--accent);
-          box-shadow: 0 0 0 0 var(--accent);
-          animation: pulse 2.6s infinite;
-          flex: none;
-        }
-        .strip-sep { margin: 0 6px; color: var(--accent); font-weight: 700; }
-        .strip-next { color: var(--text-dim); }
-        @keyframes pulse {
-          0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent); }
-          70% { box-shadow: 0 0 0 7px transparent; }
-          100% { box-shadow: 0 0 0 0 transparent; }
-        }
-        @media (max-width: 640px) { .strip-next { display: none; } }
-      `}</style>
     </Link>
   );
 }
